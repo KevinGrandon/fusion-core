@@ -16,6 +16,10 @@ export {
   unescape,
 } from './sanitization';
 
+function failure(a: string) {
+  return a();
+}
+
 // Virtual modules
 export {
   assetUrl,
