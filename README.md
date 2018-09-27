@@ -10,16 +10,16 @@ If you're using React, you should use the [`fusion-react`](https://github.com/fu
 
 ### Table of contents
 
-* [Usage](#usage)
-* [API](#api)
-  * [App](#app)
-  * [Dependency registration](#dependency-registration)
-  * [Plugin](#plugin)
-  * [Token](#token)
-  * [Memoization](#memoization)
-  * [Middleware](#middleware)
-  * [Sanitization](#sanitization)
-* [Examples](#examples)
+- [Usage](#usage)
+- [API](#api)
+  - [App](#app)
+  - [Dependency registration](#dependency-registration)
+  - [Plugin](#plugin)
+  - [Token](#token)
+  - [Memoization](#memoization)
+  - [Middleware](#middleware)
+  - [Sanitization](#sanitization)
+- [Examples](#examples)
 
 ---
 
@@ -59,29 +59,29 @@ A class that represents an application. An application is responsible for render
 **Constructor**
 
 ```flow
-const app: App = new App(el: any, render: Plugin<Render>|Render);
+const app: App = new App((el: any), (render: Plugin<Render> | Render));
 ```
 
-* `el: any` - a template root. In a React application, this would be a React element created via `React.createElement` or a JSX expression.
-* `render: Plugin<Render>|Render` - defines how rendering should occur. A Plugin should provide a value of type `Render`
-  * `type Render = (el:any) => any`
+- `el: any` - a template root. In a React application, this would be a React element created via `React.createElement` or a JSX expression.
+- `render: Plugin<Render>|Render` - defines how rendering should occur. A Plugin should provide a value of type `Render`
+  - `type Render = (el:any) => any`
 
 **app.register**
 
 ```flow
-app.register(plugin: Plugin);
-app.register(token: Token, plugin: Plugin);
-app.register(token: Token, value: any);
+app.register((plugin: Plugin));
+app.register((token: Token), (plugin: Plugin));
+app.register((token: Token), (value: any));
 ```
 
 Call this method to register a plugin or configuration value into a Fusion.js application.
 
 You can optionally pass a token as the first argument to associate the plugin/value to the token, so that they can be referenced by other plugins within Fusion.js' dependency injection system.
 
-* `plugin: Plugin` - a [Plugin](#plugin) created via [`createPlugin`](#createplugin)
-* `token: Token` - a [Token](#token) created via [`createToken`](#createtoken)
-* `value: any` - a configuration value
-* returns `undefined`
+- `plugin: Plugin` - a [Plugin](#plugin) created via [`createPlugin`](#createplugin)
+- `token: Token` - a [Token](#token) created via [`createToken`](#createtoken)
+- `value: any` - a configuration value
+- returns `undefined`
 
 **app.middleware**
 
@@ -90,16 +90,16 @@ app.middleware((deps: Object<string, Token>), (deps: Object) => Middleware);
 app.middleware((middleware: Middleware));
 ```
 
-* `deps: Object<string,Token>` - A map of local dependency names to [DI tokens](#token)
-* `middleware: Middleware` - a [middleware](#middleware)
-* returns `undefined`
+- `deps: Object<string,Token>` - A map of local dependency names to [DI tokens](#token)
+- `middleware: Middleware` - a [middleware](#middleware)
+- returns `undefined`
 
 This method is a shortcut for registering middleware plugins. Typically, you should write middlewares as plugins so you can organize different middlewares into different files.
 
 **app.enhance**
 
 ```flow
-app.enhance(token: Token, value: any => Plugin | Value);
+app.enhance((token: Token), (value: any => Plugin | Value));
 ```
 
 This method is useful for composing / enhancing functionality of existing tokens in the DI system.
@@ -112,7 +112,7 @@ await app.cleanup();
 
 Calls all plugin cleanup methods. Useful for testing.
 
-* returns `Promise`
+- returns `Promise`
 
 ---
 
@@ -144,7 +144,7 @@ app.register(RenderToken, render);
 The render token is used to register the render function with the fusion app. This is a function that knows how to
 render your application on the server/browser, and allows `fusion-core` to remain agnostic of the virtualdom library.
 
-##### SSRDeciderEnhancer
+##### SSRDeciderToken
 
 ```js
 import App, {SSRDeciderToken} from 'fusion-core';
@@ -197,11 +197,11 @@ const plugin: Plugin = createPlugin({
 });
 ```
 
-* `deps: Object<string, Token>` - A map of local dependency names to [DI tokens](#token)
-* `provides: (deps: Object) => any` - A function that provides a service
-* `middleware: (deps: Object, service: any) => Middleware` - A function that provides a middleware
-* `cleanup: ?(service: any)` => Runs when `app.cleanup` is called. Useful for tests
-* returns `plugin: Plugin` - A Fusion.js plugin
+- `deps: Object<string, Token>` - A map of local dependency names to [DI tokens](#token)
+- `provides: (deps: Object) => any` - A function that provides a service
+- `middleware: (deps: Object, service: any) => Middleware` - A function that provides a middleware
+- `cleanup: ?(service: any)` => Runs when `app.cleanup` is called. Useful for tests
+- returns `plugin: Plugin` - A Fusion.js plugin
 
 ---
 
@@ -221,11 +221,11 @@ type Token {
 ##### createToken
 
 ```flow
-const token:Token = createToken(name: string);
+const token: Token = createToken((name: string));
 ```
 
-* `name: string` - a human-readable name for the token. Used for generating useful error messages.
-* returns `token: Token`
+- `name: string` - a human-readable name for the token. Used for generating useful error messages.
+- returns `token: Token`
 
 ---
 
@@ -243,8 +243,8 @@ Fusion.js provides a `memoize` utility function to memoize per-request instances
 const memoized = {from: memoize((fn: (ctx: Context) => any))};
 ```
 
-* `fn: (ctx: Context) => any` - A function to be memoized
-* returns `memoized: (ctx: Context) => any`
+- `fn: (ctx: Context) => any` - A function to be memoized
+- returns `memoized: (ctx: Context) => any`
 
 Idiomatically, Fusion.js plugins provide memoized instances via a `from` method. This method is meant to be called from a [middleware](#middleware):
 
@@ -264,11 +264,11 @@ createPlugin({
 #### Middleware
 
 ```flow
-type Middleware = (ctx: Context, next: () => Promise) => Promise
+type Middleware = (ctx: Context, next: () => Promise) => Promise;
 ```
 
-* `ctx: Context` - a [Context](#context)
-* `next: () => Promise` - An asynchronous function call that represents rendering
+- `ctx: Context` - a [Context](#context)
+- `next: () => Promise` - An asynchronous function call that represents rendering
 
 A middleware function is essentially a [Koa](http://koajs.com/) middleware, a function that takes two argument: a `ctx` object that has some FusionJS-specific properties, and a `next` callback function.
 However, it has some additional properties on `ctx` and can run both on the `server` and the `browser`.
@@ -314,110 +314,113 @@ const APIPlugin = createPlugin({
 
 Middlewares receive a `ctx` object as their first argument. This object has a property called `element` in both server and client.
 
-* `ctx: Object`
-  * `element: Object`
+- `ctx: Object`
+  - `element: Object`
 
 Additionally, when server-side rendering a page, FusionJS sets `ctx.template` to an object with the following properties:
 
-* `ctx: Object`
-  * `template: Object`
-    * `htmlAttrs: Object` - attributes for the `<html>` tag. For example `{lang: 'en-US'}` turns into `<html lang="en-US">`. Default: empty object
-    * `bodyAttrs: Object` - attributes for the `<body>` tag. For example `{test: 'test'}` turns into `<body test="test">`. Default: empty object
-    * `title: string` - The content for the `<title>` tag. Default: empty string
-    * `head: Array<SanitizedHTML>` - A list of [sanitized HTML strings](#html-sanitization). Default: empty array
-    * `body: Array<SanitizedHTML>` - A list of [sanitized HTML strings](#html-sanitization). Default: empty array
+- `ctx: Object`
+  - `template: Object`
+    - `htmlAttrs: Object` - attributes for the `<html>` tag. For example `{lang: 'en-US'}` turns into `<html lang="en-US">`. Default: empty object
+    - `bodyAttrs: Object` - attributes for the `<body>` tag. For example `{test: 'test'}` turns into `<body test="test">`. Default: empty object
+    - `title: string` - The content for the `<title>` tag. Default: empty string
+    - `head: Array<SanitizedHTML>` - A list of [sanitized HTML strings](#html-sanitization). Default: empty array
+    - `body: Array<SanitizedHTML>` - A list of [sanitized HTML strings](#html-sanitization). Default: empty array
 
 When a request does not require a server-side render, `ctx.body` follows regular Koa semantics.
 
 In the server, `ctx` also exposes the same properties as a [Koa context](http://koajs.com/#context)
 
-* `ctx: Object`
-  * `req: http.IncomingMessage` - [Node's `request` object](https://nodejs.org/api/http.html#http_class_http_incomingmessage)
-  * `res: Response` - [Node's `response` object](https://nodejs.org/api/http.html#http_class_http_serverresponse)
-  * `request: Request` - [Koa's `request` object](https://koajs.com/#request): <details><summary>View Koa request details</summary>
-    * `header: Object` - alias of `request.headers`
-    * `headers: Object` - map of parsed HTTP headers
-    * `method: string` - HTTP method
-    * `url: string` - request URL
-    * `originalUrl: string` - same as `url`, except that `url` may be modified (e.g. for URL rewriting)
-    * `path: string` - request pathname
-    * `query: Object` - parsed querystring as an object
-    * `querystring: string` - querystring without `?`
-    * `host: string` - host and port
-    * `hostname: string` - get hostname when present. Supports X-Forwarded-Host when app.proxy is true, otherwise Host is used
-    * `length:number` - return request Content-Length as a number when present, or undefined.
-    * `origin: string` - request origin, including protocol and host
-    * `href: string` - full URL including protocol, host, and URL
-    * `fresh: boolean` - check for cache negotiation
-    * `stale: boolean` - inverse of `fresh`
-    * `socket: Socket` - request socket
-    * `protocol: string` - return request protocol, "https" or "http". Supports X-Forwarded-Proto when app.proxy is true
-    * `secure: boolean` - shorthand for ctx.protocol == "https" to check if a request was issued via TLS.
-    * `ip: string` - remote IP address
-    * `ips: Array<string>` - proxy IPs
-    * `subdomains: Array<string>` - return subdomains as an array.For example, if the domain is "tobi.ferrets.example.com": If app.subdomainOffset is not set, ctx.subdomains is \["ferrets", "tobi"\]
-    * `is: (...types: ...string) => boolean` - request type check `is('json', 'urlencoded')`
-    * `accepts: (...types: ...string) => boolean` - request MIME type check
-    * `acceptsEncodings: (...encodings: ...string) => boolean` - check if encodings are acceptable
-    * `acceptsCharset: (...charsets: ...string) => boolean` - check if charsets are acceptable
-    * `acceptsLanguages: (...languages: ...string) => boolean` - check if langs are acceptable
-    * `get: (name: String) => string` - returns a header field
-  </details>
+- `ctx: Object`
 
-  * `response: Response` - [Koa's `response` object](https://koajs.com/#response): <details><summary>View Koa response details</summary>
-    * `header: Object` - alias of `request.headers`
-    * `headers: Object` - map of parsed HTTP headers
-    * `socket: Socket` - response socket
-    * `status: String` - response status. By default, `response.status` is set to `404` unlike node's `res.statusCode` which defaults to `200`.
-    * `message: String` - response status message. By default, `response.message` is associated with `response.status`.
-    * `length: Number` - response Content-Length as a number when present, or deduce from `ctx.body` when possible, or `undefined`.
-    * `body: String, Buffer, Stream, Object(JSON), null` - get response body
-    * `get: (name: String) => string` - returns a header field
-    * `set: (field: String, value: String) => undefined` - set response header `field` to `value`
-    * `set: (fields: Object) => undefined` - set response `fields`
-    * `append: (field: String, value: String) => undefined` - append response header `field` with `value`
-    * `remove: (field: String) => undefined` - remove header `field`
-    * `type: String` - response `Content-Type`
-    * `is: (...types: ...string) => boolean` - response type check `is('json', 'urlencoded')`
-    * `redirect: (url: String, alt: ?String) => undefined`- perform a 302 redirect to `url`
-    * `attachment (filename: ?String) => undefined` - set `Content-Disposition` to "attachment" to signal the client to prompt for download. Optionally specify the `filename` of the download.
-    * `headerSent: boolean` - check if a response header has already been sent
-    * `lastModified: Date` - `Last-Modified` header as a `Date`
-    * `etag: String` - set the ETag of a response including the wrapped `"`s.
-    * `vary: (field: String) => String` - vary on `field`
-    * `flushHeaders () => undefined` - flush any set headers, and begin the body
-    </details>
+  - `req: http.IncomingMessage` - [Node's `request` object](https://nodejs.org/api/http.html#http_class_http_incomingmessage)
+  - `res: Response` - [Node's `response` object](https://nodejs.org/api/http.html#http_class_http_serverresponse)
+  - `request: Request` - [Koa's `request` object](https://koajs.com/#request): <details><summary>View Koa request details</summary>
 
-  * `cookies: {get, set}` - cookies based on [Cookie Module](https://github.com/pillarjs/cookies): <details><summary>View Koa cookies details</summary>
-    * `get: (name: string, options: ?Object) => string` - get a cookie
-      * `name: string`
-      * `options: {signed: boolean}`
-    * `set: (name: string, value: string, options: ?Object)`
-      * `name: string`
-      * `value: string`
-      * `options: Object` - Optional
-        * `maxAge: number` - a number representing the milliseconds from Date.now() for expiry
-        * `signed: boolean` - sign the cookie value
-        * `expires: Date` - a Date for cookie expiration
-        * `path: string` - cookie path, /' by default
-        * `domain: string` - cookie domain
-        * `secure: boolean` - secure cookie
-        * `httpOnly: boolean` - server-accessible cookie, true by default
-        * `overwrite: boolean` - a boolean indicating whether to overwrite previously set cookies of the same name (false by default). If this is true, all cookies set during the same request with the same name (regardless of path or domain) are filtered out of the Set-Cookie header when setting this cookie.
-  </details>
+    - `header: Object` - alias of `request.headers`
+    - `headers: Object` - map of parsed HTTP headers
+    - `method: string` - HTTP method
+    - `url: string` - request URL
+    - `originalUrl: string` - same as `url`, except that `url` may be modified (e.g. for URL rewriting)
+    - `path: string` - request pathname
+    - `query: Object` - parsed querystring as an object
+    - `querystring: string` - querystring without `?`
+    - `host: string` - host and port
+    - `hostname: string` - get hostname when present. Supports X-Forwarded-Host when app.proxy is true, otherwise Host is used
+    - `length:number` - return request Content-Length as a number when present, or undefined.
+    - `origin: string` - request origin, including protocol and host
+    - `href: string` - full URL including protocol, host, and URL
+    - `fresh: boolean` - check for cache negotiation
+    - `stale: boolean` - inverse of `fresh`
+    - `socket: Socket` - request socket
+    - `protocol: string` - return request protocol, "https" or "http". Supports X-Forwarded-Proto when app.proxy is true
+    - `secure: boolean` - shorthand for ctx.protocol == "https" to check if a request was issued via TLS.
+    - `ip: string` - remote IP address
+    - `ips: Array<string>` - proxy IPs
+    - `subdomains: Array<string>` - return subdomains as an array.For example, if the domain is "tobi.ferrets.example.com": If app.subdomainOffset is not set, ctx.subdomains is \["ferrets", "tobi"\]
+    - `is: (...types: ...string) => boolean` - request type check `is('json', 'urlencoded')`
+    - `accepts: (...types: ...string) => boolean` - request MIME type check
+    - `acceptsEncodings: (...encodings: ...string) => boolean` - check if encodings are acceptable
+    - `acceptsCharset: (...charsets: ...string) => boolean` - check if charsets are acceptable
+    - `acceptsLanguages: (...languages: ...string) => boolean` - check if langs are acceptable
+    - `get: (name: String) => string` - returns a header field
+      </details>
 
-  * `state: Object` - recommended namespace for passing information through middleware and to your frontend views `ctx.state.user = await User.find(id)`
-  * `throw: (status: ?number, message: ?string, properties: ?Object) => void` - throws an error
-    * `status: number` - HTTP status code
-    * `message: string` - error message
-    * `properties: Object` - is merged to the error object
-  * `assert: (value: any, status: ?number, message: ?string, properties: ?Object)` - throws if `value` is falsy. Uses [Assert](https://github.com/jshttp/http-assert)
-    * `value: any`
-    * `status: number` - HTTP status code
-    * `message: string` - error message
-    * `properties: Object` - is merged to the error object
-  * `respond: boolean` - set to true to bypass Koa's built-in response handling. You should not use this flag.
-  * `app: Object` - a reference to the Koa instance
+  - `response: Response` - [Koa's `response` object](https://koajs.com/#response): <details><summary>View Koa response details</summary>
+
+    - `header: Object` - alias of `request.headers`
+    - `headers: Object` - map of parsed HTTP headers
+    - `socket: Socket` - response socket
+    - `status: String` - response status. By default, `response.status` is set to `404` unlike node's `res.statusCode` which defaults to `200`.
+    - `message: String` - response status message. By default, `response.message` is associated with `response.status`.
+    - `length: Number` - response Content-Length as a number when present, or deduce from `ctx.body` when possible, or `undefined`.
+    - `body: String, Buffer, Stream, Object(JSON), null` - get response body
+    - `get: (name: String) => string` - returns a header field
+    - `set: (field: String, value: String) => undefined` - set response header `field` to `value`
+    - `set: (fields: Object) => undefined` - set response `fields`
+    - `append: (field: String, value: String) => undefined` - append response header `field` with `value`
+    - `remove: (field: String) => undefined` - remove header `field`
+    - `type: String` - response `Content-Type`
+    - `is: (...types: ...string) => boolean` - response type check `is('json', 'urlencoded')`
+    - `redirect: (url: String, alt: ?String) => undefined`- perform a 302 redirect to `url`
+    - `attachment (filename: ?String) => undefined` - set `Content-Disposition` to "attachment" to signal the client to prompt for download. Optionally specify the `filename` of the download.
+    - `headerSent: boolean` - check if a response header has already been sent
+    - `lastModified: Date` - `Last-Modified` header as a `Date`
+    - `etag: String` - set the ETag of a response including the wrapped `"`s.
+    - `vary: (field: String) => String` - vary on `field`
+    - `flushHeaders () => undefined` - flush any set headers, and begin the body
+      </details>
+
+  - `cookies: {get, set}` - cookies based on [Cookie Module](https://github.com/pillarjs/cookies): <details><summary>View Koa cookies details</summary>
+
+    - `get: (name: string, options: ?Object) => string` - get a cookie
+      - `name: string`
+      - `options: {signed: boolean}`
+    - `set: (name: string, value: string, options: ?Object)`
+      _ `name: string`
+      _ `value: string`
+      _ `options: Object` - Optional
+      _ `maxAge: number` - a number representing the milliseconds from Date.now() for expiry
+      _ `signed: boolean` - sign the cookie value
+      _ `expires: Date` - a Date for cookie expiration
+      _ `path: string` - cookie path, /' by default
+      _ `domain: string` - cookie domain
+      _ `secure: boolean` - secure cookie
+      _ `httpOnly: boolean` - server-accessible cookie, true by default \* `overwrite: boolean` - a boolean indicating whether to overwrite previously set cookies of the same name (false by default). If this is true, all cookies set during the same request with the same name (regardless of path or domain) are filtered out of the Set-Cookie header when setting this cookie.
+      </details>
+
+  - `state: Object` - recommended namespace for passing information through middleware and to your frontend views `ctx.state.user = await User.find(id)`
+  - `throw: (status: ?number, message: ?string, properties: ?Object) => void` - throws an error
+    - `status: number` - HTTP status code
+    - `message: string` - error message
+    - `properties: Object` - is merged to the error object
+  - `assert: (value: any, status: ?number, message: ?string, properties: ?Object)` - throws if `value` is falsy. Uses [Assert](https://github.com/jshttp/http-assert)
+    - `value: any`
+    - `status: number` - HTTP status code
+    - `message: string` - error message
+    - `properties: Object` - is merged to the error object
+  - `respond: boolean` - set to true to bypass Koa's built-in response handling. You should not use this flag.
+  - `app: Object` - a reference to the Koa instance
 
 #### Sanitization
 
@@ -430,7 +433,7 @@ import {html} from 'fusion-core';
 A template tag that creates safe HTML objects that are compatible with `ctx.template.head` and `ctx.template.body`. Template string interpolations are escaped. Use this function to prevent XSS attacks.
 
 ```flow
-const sanitized: SanitizedHTML = html`<meta name="viewport" content="width=device-width, initial-scale=1">`
+const sanitized: SanitizedHTML = html`<meta name="viewport" content="width=device-width, initial-scale=1">`;
 ```
 
 **escape**
@@ -442,10 +445,10 @@ import {escape} from 'fusion-core';
 Escapes HTML
 
 ```flow
-const escaped:string = escape(value: string)
+const escaped: string = escape((value: string));
 ```
 
-* `value: string` - the string to be escaped
+- `value: string` - the string to be escaped
 
 **unescape**
 
@@ -456,10 +459,10 @@ import {unescape} from 'fusion-core';
 Unescapes HTML
 
 ```flow
-const unescaped:string = unescape(value: string)
+const unescaped: string = unescape((value: string));
 ```
 
-* `value: string` - the string to be unescaped
+- `value: string` - the string to be unescaped
 
 **dangerouslySetHTML**
 
@@ -470,10 +473,10 @@ import {dangerouslySetHTML} from 'fusion-core';
 A function that blindly creates a trusted SanitizedHTML object without sanitizing against XSS. Do not use this function unless you have manually sanitized your input and written tests against XSS attacks.
 
 ```flow
-const trusted:string = dangerouslySetHTML(value: string)
+const trusted: string = dangerouslySetHTML((value: string));
 ```
 
-* `value: string` - the string to be trusted
+- `value: string` - the string to be trusted
 
 ---
 
